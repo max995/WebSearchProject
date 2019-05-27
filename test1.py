@@ -20,13 +20,14 @@ writer = IndexWriter(indexDir, writeConfig)
 root ="./Data/wiki-pages-text"
 
 t1 = FieldType()
+#t1.setIndexed(True)
 t1.setStored(True)
 t1.setTokenized(False)
 t1.setIndexOptions(IndexOptions.DOCS_AND_FREQS)
-
 t2 = FieldType()
-t2.setStored(False)
-t2.setTokenized(True)
+#t2.setIndexed(True)
+t2.setStored(True)# no saving
+t2.setTokenized(True)##no need to
 t2.setIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
 
 
@@ -43,20 +44,21 @@ for root, dirnames, filenames in os.walk(top=root):
         i = 0
         # contents = file.read()
         while True:
-            i += 1
+            #file.seek(i)
             line = file.readline()
             doc = Document()
             if not line:
                 break
-            docName = line.split()[0] + ''+ line.split()[1]
-            #docName = line.split()[0] + ' ' + line.split()[1]
-            #print(docName)
-
-            doc.add(Field("name", filename, t1))
-            doc.add(Field("docName",docName, t1))
-            doc.add(Field("content",line.replace(docName, ''),t2))
-            print(doc)
+            docName = line.split()[0]
+            docIndex= line.split()[1]
+            doc.add(Field("name", filename , t1))
+            doc.add(Field("index",docIndex,t1))
+            doc.add(Field("line", str(i),t1))
+            doc.add(Field("docName",docName, t2))
+            doc.add(Field("content",line.replace(docName,docIndex, ''),t2))
+            #print(doc)
             writer.addDocument(doc)
+            i+=1
         file.close()
 #ticker = Ticker()
 writer.commit()

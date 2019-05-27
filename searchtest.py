@@ -1,7 +1,8 @@
-####？？？？？
+#### need to deal with claim
+
 
 import lucene
-
+from datetime import datetime
 from org.apache.lucene.search import IndexSearcher
 from org.apache.lucene.index import DirectoryReader
 from org.apache.lucene.queryparser.classic import QueryParser
@@ -14,23 +15,43 @@ lucene.initVM()
 
 searcher = IndexSearcher(DirectoryReader.open(SimpleFSDirectory(File("./index/").toPath())))
 analyzer = StandardAnalyzer()
-#while True:
-    #command = raw_input("Query:")
-query = QueryParser("content", analyzer).parse("Nikolaj Coster-Waldau worked with the Fox Broadcasting Company")
-scoreDocs = searcher.search(query,2000).scoreDocs
+print('query','Savages')
+query = QueryParser("docName", analyzer).parse('Tatum_ONeal')
+#query1 =QueryParser("content",analyzer).parse('wa_born_in_a_hospital_')
+scoreDocs = searcher.search(query,3).scoreDocs
+#scoreDocs1=searcher.search(query1,2000).scoreDocs
 print ("%s total matching documents." % len(scoreDocs))
 results = []
 #print(scoreDocs)
+start = datetime.now()
 for scoreDoc in scoreDocs:
-    #print(scoreDoc)
+    #for scoreDoc1 in scoreDocs1:
+    print(scoreDoc)
     doc = searcher.doc(scoreDoc.doc)
-    # print(doc)
+    #doc1 = searcher.doc1(scoreDoc1.doc1)
     print("name", doc.get("name"),
-          "docName", doc.get("docName"))
-          # "content",doc.get("content"))
-    # for listpair in results:
-    #     if doc
-    results.append([doc.get("name"),doc.get("docName")])
-#print(results)
+          "line", doc.get("line"),
+          "docName", doc.get("docName"),
+          "content",doc.get("content"))
+       #"content",doc.get("content"))
+# for listpair in results:
+#     if doc
+    #if doc.get("docName")==doc1.get("docName"):
+    wp=[]
+    if doc.get("docName") not in results:
+        wp = list(doc.get("docName"))
+        print(wp)
+
+        if '\"' not in wp:
+            results.append(doc.get("docName"))
+        elif '\"' in wp:
+            for n in wp:
+                if n=='\"':
+                    n='\\"'
+            print(wp)
+        results.append([doc.get("docName").replace('"','\"')])
+print(results)
 
 del searcher
+end = datetime.now()
+print(end - start)

@@ -73,8 +73,8 @@ for ident, arecord in actual.items():
 		num_drec += 1
 
 
-accuracy = correct_label / float(num_instances)
-print('Label Accuracy', '\t\t%.2f%%' % (100 * accuracy))
+#accuracy = correct_label / float(num_instances)
+#print('Label Accuracy', '\t\t%.2f%%' % (100 * accuracy))
 
 precision = evidence_prec / float(num_eprec) if num_eprec != 0 else 0
 recall = evidence_recall / float(num_erec) if num_erec != 0 else 0
