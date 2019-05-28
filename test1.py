@@ -25,11 +25,7 @@ t1.setStored(True)
 t1.setTokenized(False)
 t1.setIndexOptions(IndexOptions.DOCS_AND_FREQS)
 
-t2 = FieldType()
 
-t2.setStored(True)# no saving
-t2.setTokenized(False)##no need to
-t2.setIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
 
 t3 = FieldType()
 
@@ -61,12 +57,13 @@ for root, dirnames, filenames in os.walk(top=root):
             doc.add(Field("name", filename , t1))
             #doc.add(Field("index",docIndex,t1))
             doc.add(Field("line", str(i),t1))
-            doc.add(Field("docName",docName, t2))
+            doc.add(Field("docName",docName, t3))
             doc.add(Field("content",line.replace(docName,''),t3))
             #print(doc)
             writer.addDocument(doc)
             i+=1
         file.close()
+    #filename.close()
 #ticker = Ticker()
 writer.commit()
 writer.close()

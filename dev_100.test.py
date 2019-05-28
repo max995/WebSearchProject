@@ -17,7 +17,7 @@ from org.apache.lucene.analysis.standard import StandardAnalyzer
 
 lucene.initVM()
 stoplist =[',','.','\"','\n','The','the','\'',':']
-searcher = IndexSearcher(DirectoryReader.open(SimpleFSDirectory(File("./index/").toPath())))
+searcher = IndexSearcher(DirectoryReader.open(SimpleFSDirectory(File("./index1/").toPath())))
 
 def searchFunction(claim):
     analyzer = StandardAnalyzer()
@@ -154,7 +154,7 @@ def get_allen_result(allen_re_v):
 
 
 with open("./Data/devset_100.json",'r') as trainset:
-    with open('./dev_100_query4.json', 'a',encoding='utf8') as newClaim:
+    with open('./dev_index_query3.json', 'a',encoding='utf8') as newClaim:
         newClaim.write('{')
         total_dict = json.load(trainset)
         print(len(total_dict))

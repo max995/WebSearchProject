@@ -22,7 +22,7 @@ searcher = IndexSearcher(DirectoryReader.open(SimpleFSDirectory(File("./index/")
 def searchFunction(claim):
     analyzer = StandardAnalyzer()
     query = QueryParser("docName", analyzer).parse(claim)
-    scoreDocs = searcher.search(query, 5).scoreDocs
+    scoreDocs = searcher.search(query, 4).scoreDocs
     #print("%s total matching documents." % len(scoreDocs))
     results = []
     for scoreDoc in scoreDocs:
@@ -153,8 +153,8 @@ def get_allen_result(allen_re_v):
     return wordlist
 
 
-with open("./Data/devset.json",'r') as trainset:
-    with open('./new_claim_allen5.json', 'a',encoding='utf8') as newClaim:
+with open("./Data/test-unlabelled1.json",'r',encoding='utf8') as trainset:
+    with open('./allen_test333.json', 'a',encoding='utf8') as newClaim:
         newClaim.write('{')
         total_dict = json.load(trainset)
         print(len(total_dict))
@@ -176,11 +176,13 @@ with open("./Data/devset.json",'r') as trainset:
                 word2=list(word)
                 if '(' in word2:
                     claimdoc = claimdoc
-                elif ')' in word2:
+                if ')' in word2:
                     claimdoc =claimdoc
-                if word=='(':
+                elif word=='(':
                     claimdoc=claimdoc
                 elif word==')':
+                    claimdoc=claimdoc
+                if '/' in word2:
                     claimdoc=claimdoc
                 elif word not in stoplist:
                     claimdoc += word

@@ -16,7 +16,7 @@ lucene.initVM()
 searcher = IndexSearcher(DirectoryReader.open(SimpleFSDirectory(File("./index/").toPath())))
 analyzer = StandardAnalyzer()
 print('query','Savages')
-query = QueryParser("docName", analyzer).parse('Tatum_ONeal')
+query = QueryParser("docName", analyzer).parse('Colin_Kaepernick')
 #query1 =QueryParser("content",analyzer).parse('wa_born_in_a_hospital_')
 scoreDocs = searcher.search(query,3).scoreDocs
 #scoreDocs1=searcher.search(query1,2000).scoreDocs

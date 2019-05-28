@@ -152,82 +152,92 @@ def get_allen_result(allen_re_v):
             j = j + 1
     return wordlist
 
-
-with open("./Data/devset.json",'r') as trainset:
-    with open('./new_claim_allen5.json', 'a',encoding='utf8') as newClaim:
-        newClaim.write('{')
-        total_dict = json.load(trainset)
-        print(len(total_dict))
-        l = 0
-        for claimnum in total_dict.keys():
-            total_claim = {}
-            newClaim.write(
-                "\"" + claimnum + "\"" + ':{' + '\n\t' + "\"claim\":" + "\"")
-            for claim in list(total_dict[claimnum]["claim"]):
-                if claim !='\"':
-                    newClaim.write(claim+'')
-                else:
-                    newClaim.write('\\"')
-            newClaim.write("\""
-                + ',' + '\n\t' + "\"evidence\" : [")
-            print('l', l)
-            claimdoc = ''
-            for word in total_dict[claimnum]["claim"]:
-                word2=list(word)
-                if '(' in word2:
-                    claimdoc = claimdoc
-                elif ')' in word2:
-                    claimdoc =claimdoc
-                if word=='(':
-                    claimdoc=claimdoc
-                elif word==')':
-                    claimdoc=claimdoc
-                elif word not in stoplist:
-                    claimdoc += word
-            print(claimdoc)
-            allen_re=predictor.predict(sentence=claimdoc)
-            word_list={}
-            word_list=get_allen_result(allen_re)
-            print(word_list)
-            total_allen_re=[]
-            for allen_re_re in word_list.values():
-                for allen_re in allen_re_re:
-                    allen_result=searchFunction(allen_re)
-                    print('re',allen_result)
-                    for allen_result_re in allen_result:
-                        if allen_result_re not in total_allen_re:
-                            total_allen_re.append(allen_result_re)
-            print('t',total_allen_re)
-            k = 0
-            for re1 in total_allen_re:
-                re_str=list(re1)
-                newClaim.write('\n\t' + '[' + '\n\t' + "\"" )
-                if '\"' in re_str:
-                    for re_re_str in re_str:
-                        if re_re_str =='\"':
-                            newClaim.write('\\"')
+def main():
+    try:
+        with open("./Data/test-unlabelled.json",'r',encoding='utf8') as trainset:
+            with open('./allen_test_5.json', 'a',encoding='utf8') as newClaim:
+                newClaim.write('{')
+                total_dict = json.load(trainset)
+                print(len(total_dict))
+                l = 0
+                for claimnum in total_dict.keys():
+                    total_claim = {}
+                    newClaim.write(
+                        "\"" + claimnum + "\"" + ':{' + '\n\t' + "\"claim\":" + "\"")
+                    for claim in list(total_dict[claimnum]["claim"]):
+                        if claim !='\"':
+                            newClaim.write(claim+'')
                         else:
-                            newClaim.write(re_re_str)
-                    if k == len(total_allen_re) - 1:
-                        newClaim.write("\"" + '\n\t' + ']' + '\n')
+                            newClaim.write('\\"')
+                    newClaim.write("\""
+                        + ',' + '\n\t' + "\"evidence\" : [")
+                    print('l', l)
+                    claimdoc = ''
+                    for word in total_dict[claimnum]["claim"]:
+                        word2=list(word)
+                        if '(' in word2:
+                            claimdoc = claimdoc
+                        elif ')' in word2:
+                            claimdoc =claimdoc
+                        if word=='(':
+                            claimdoc=claimdoc
+                        elif word==')':
+                            claimdoc=claimdoc
+                        elif word not in stoplist:
+                            claimdoc += word
+                    print(claimdoc)
+                    allen_re=predictor.predict(sentence=claimdoc)
+                    word_list={}
+                    word_list=get_allen_result(allen_re)
+                    print(word_list)
+                    total_allen_re=[]
+                    try:
+                        for allen_re_re in word_list.values():
+                            for allen_re in allen_re_re:
+                                allen_result=searchFunction(allen_re)
+                                print('re',allen_result)
+                                for allen_result_re in allen_result:
+                                    if allen_result_re not in total_allen_re:
+                                        total_allen_re.append(allen_result_re)
+                        print('t',total_allen_re)
+                    except Exception as e:
+                        print(e)
+                    k = 0
+                    for re1 in total_allen_re:
+                        re_str=list(re1)
+                        newClaim.write('\n\t' + '[' + '\n\t' + "\"" )
+                        if '\"' in re_str:
+                            for re_re_str in re_str:
+                                if re_re_str =='\"':
+                                    newClaim.write('\\"')
+                                else:
+                                    newClaim.write(re_re_str)
+                            if k == len(total_allen_re) - 1:
+                                newClaim.write("\"" + '\n\t' + ']' + '\n')
+                            else:
+                                newClaim.write( "\"" + '\n\t'+ '],' + '\n')
+                                k += 1
+                        else:
+                            if k == len(total_allen_re) - 1:
+                                newClaim.write(re1 + "\"" + '\n\t' + ']' + '\n')
+                            else:
+                                newClaim.write(re1 + "\"" + '\n\t'+ '],' + '\n')
+                                k += 1
+                    if l == len(total_dict) - 1:
+                        newClaim.write("]" + "\n" + "}" + "\n\t")
                     else:
-                        newClaim.write( "\"" + '\n\t'+ '],' + '\n')
-                        k += 1
-                else:
-                    if k == len(total_allen_re) - 1:
-                        newClaim.write(re1 + "\"" + '\n\t' + ']' + '\n')
-                    else:
-                        newClaim.write(re1 + "\"" + '\n\t'+ '],' + '\n')
-                        k += 1
-            if l == len(total_dict) - 1:
-                newClaim.write("]" + "\n" + "}" + "\n\t")
-            else:
-                newClaim.write("]" + "\n" + "}," + "\n\t")
-            l+=1
-        newClaim.write("}")
-del searcher
+                        newClaim.write("]" + "\n" + "}," + "\n\t")
+                    l+=1
+                newClaim.write("}")
+        del searcher
 
-newClaim.close()
-trainset.close()
-end = datetime.now()
-print(end - start)
+        newClaim.close()
+        trainset.close()
+        end = datetime.now()
+        print(end - start)
+    except Exception as e:
+        print(e)
+
+
+if __name__ == '__main__':
+    main()
